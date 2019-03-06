@@ -38,7 +38,8 @@ vector<Mesh *> load_model(const char * model_path)
 	{
 		if (geometry_tag->has_attribute("id"))
 		{
-			cout << "loading geometry name = " << geometry_tag->get_attribute("name")->value << endl;
+			char * geometry_name = geometry_tag->get_attribute("name")->value;
+			cout << "loading geometry name = " << geometry_name << endl;
 
 			//read input sources
 			auto source_tags = geometry_tag->get_tags_by_name("source");
@@ -173,6 +174,7 @@ vector<Mesh *> load_model(const char * model_path)
 			}
 
 			Mesh * mesh = (Mesh *)malloc(sizeof(Mesh));
+			strcpy(mesh->name, geometry_name);
 			mesh->vertex_count = vertex_count;
 			mesh->vertices = vertices;
 

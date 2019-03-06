@@ -10,6 +10,8 @@ struct Vertex
 
 struct Mesh
 {
+	char name[20];
+
 	//vertex data
 	unsigned int vertex_count;
 	Vertex * vertices;

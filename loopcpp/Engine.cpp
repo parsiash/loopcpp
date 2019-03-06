@@ -136,6 +136,7 @@ void render(struct Engine * engine)
 	for (int i = 0; i < main_engine->mesh_count; i++)
 	{
 		Mesh * mesh = main_engine->meshes[i];
+
 		glBindVertexArray(mesh->vao);
 
 		glm::mat4 model_transform = glm::mat4(1.0f);

@@ -8,6 +8,13 @@
 
 using namespace std;
 
+const char * all_model_paths[] = 
+{
+	"../resources/cube.dae",
+	"../resources/building.dae",
+	"../resources/sphere.dae",
+};
+
 vector<Mesh *> load_model(const char * model_path)
 {
 	cout << "loading model from file : " << model_path << endl;
@@ -183,6 +190,19 @@ vector<Mesh *> load_model(const char * model_path)
 	}
 
 	free_xml_data(xml_data);
+
+	return meshes;
+}
+
+vector<Mesh *> load_all_models()
+{
+	vector<Mesh *> meshes;
+
+	for (auto model_path : all_model_paths)
+	{
+		auto model_meshes = load_model(model_path);
+		meshes.insert(meshes.end(), model_meshes.begin(), model_meshes.end());
+	}
 
 	return meshes;
 }

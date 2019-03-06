@@ -49,9 +49,7 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 
 	//load models
 	vector<Mesh *> temp_meshes;
-	temp_meshes = load_model("../resources/cube.dae");
-	auto second_meshes = load_model("../resources/building.dae");
-	temp_meshes.insert(temp_meshes.end(), second_meshes.begin(), second_meshes.end());
+	temp_meshes = load_all_models();
 	main_engine->mesh_count = temp_meshes.size();
 	main_engine->meshes = (Mesh **)malloc(main_engine->mesh_count * sizeof(Mesh *));
 	for(int  i = 0; i < temp_meshes.size(); i++)

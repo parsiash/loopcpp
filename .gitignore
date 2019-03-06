@@ -34,3 +34,5 @@
 
 #additional
 .vs/*
+Debug/*
+loopcpp/Debug/*

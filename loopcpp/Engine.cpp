@@ -34,7 +34,7 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 	main_engine->input_module = create_input_module(main_engine->window);
 
 	//create camera
-	main_engine->main_camera = create_camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+	main_engine->main_camera = create_camera(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, -1.0f));
 
 	//configure openGL
 	glEnable(GL_DEPTH_TEST);
@@ -114,35 +114,43 @@ void render(struct Engine * engine)
 	glClearColor(1, 0.5, 0.5, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
+
+	//setup shader and textures
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, engine->texture_0);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, engine->texture_1);
-
 	engine->test_shader->use();
 	glUniform1i(glGetUniformLocation(engine->test_shader->program_id, "texture_0"), 0);
 	glUniform1i(glGetUniformLocation(engine->test_shader->program_id, "texture_1"), 1);
 
 
-	//update view transform
+	//setup view and projection transforms
 	glm::mat4 view_transform = engine->main_camera->get_view_transform();
-
 	glm::mat4 projection_transform = glm::perspective(glm::radians(engine->main_camera->fov), (engine->screen_width * 1.0f) / engine->screen_height, 0.1f, 100.0f);
-	glUniformMatrix4fv(glGetUniformLocation(engine->test_shader->program_id, "view"), 1, GL_FALSE, glm::value_ptr(view_transform));
-	glUniformMatrix4fv(glGetUniformLocation(engine->test_shader->program_id, "projection"), 1, GL_FALSE, glm::value_ptr(projection_transform));
+	engine->test_shader->set_mat4("view", view_transform);
+	engine->test_shader->set_mat4("projection", projection_transform);
+
 
 	for (int i = 0; i < main_engine->mesh_count; i++)
 	{
 		Mesh * mesh = main_engine->meshes[i];
 
-		glBindVertexArray(mesh->vao);
+		if (!strcmp(mesh->name, "Cube"))
+		{
+			glBindVertexArray(mesh->vao);
 
-		glm::mat4 model_transform = glm::mat4(1.0f);
-		model_transform = glm::translate(model_transform, cube_positions[i]);
-		glUniformMatrix4fv(glGetUniformLocation(engine->test_shader->program_id, "model"), 1, GL_FALSE, glm::value_ptr(model_transform));
+			glm::mat4 model_transform = glm::mat4(1.0f);
+			model_transform = glm::translate(model_transform, cube_positions[i * 2]);
+			glUniformMatrix4fv(glGetUniformLocation(engine->test_shader->program_id, "model"), 1, GL_FALSE, glm::value_ptr(model_transform));
 
-		glDrawArrays(GL_TRIANGLES, 0, mesh->vertex_count);
+			glDrawArrays(GL_TRIANGLES, 0, mesh->vertex_count);
+		}
 	}
+
+	//render test light sphere
+
 
 }
 

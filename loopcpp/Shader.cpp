@@ -63,3 +63,63 @@ void Shader::use()
 {
 	glUseProgram(this->program_id);
 }
+
+void Shader::set_bool(const char * name, bool value)
+{
+	int uniform_location = glGetUniformLocation(this->program_id, name);
+	if (uniform_location < 0)
+	{
+		std::cout << "no uniform with name " << name << " found" << std::endl;
+		return;
+	}
+
+	glUniform1i(uniform_location, (int)value);
+}
+
+void Shader::set_int(const char * name, int value)
+{
+	int uniform_location = glGetUniformLocation(this->program_id, name);
+	if (uniform_location < 0)
+	{
+		std::cout << "no uniform with name " << name << " found" << std::endl;
+		return;
+	}
+
+	glUniform1i(uniform_location, value);
+}
+
+void Shader::set_float(const char * name, float value)
+{
+	int uniform_location = glGetUniformLocation(this->program_id, name);
+	if (uniform_location < 0)
+	{
+		std::cout << "no uniform with name " << name << " found" << std::endl;
+		return;
+	}
+
+	glUniform1f(uniform_location, value);
+}
+
+void Shader::set_vec3(const char * name, vec3 value)
+{
+	int uniform_location = glGetUniformLocation(this->program_id, name);
+	if (uniform_location < 0)
+	{
+		std::cout << "no uniform with name " << name << " found" << std::endl;
+		return;
+	}
+
+	glUniform3fv(uniform_location, 1, &value[0]);
+}
+
+void Shader::set_mat4(const char * name, mat4 value)
+{
+	int uniform_location = glGetUniformLocation(this->program_id, name);
+	if (uniform_location < 0)
+	{
+		std::cout << "no uniform with name " << name << " found" << std::endl;
+		return;
+	}
+
+	glUniformMatrix4fv(uniform_location, 1, GL_FALSE, &value[0][0]);
+}

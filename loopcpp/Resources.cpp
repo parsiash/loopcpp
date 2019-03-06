@@ -65,11 +65,11 @@ vector<Mesh *> load_model(const char * model_path)
 
 					//extract stride value from technique_common tag
 					source.stride = atoi(source_tag->get_tag_by_name("technique_common")->get_tag_by_name("accessor")->get_attribute("stride")->value);
-					cout << endl << " source data for " << source.source_id << " with stride = " << source.stride << endl;
 				}
 
 				input_sources.push_back(source);
 			}
+
 
 			//extract tirangles' data
 			auto triangles_tag = geometry_tag->get_tag_by_name("triangles");
@@ -110,22 +110,27 @@ vector<Mesh *> load_model(const char * model_path)
 				continue;
 			}
 
-			for (auto input_source : input_sources)
+			for (int i = 0; i < input_sources.size(); i++)
 			{
-				if (!strcmp(input_source.source_id, vertex_source_id))
+				auto input_source = &input_sources[i];
+				if (!strcmp(input_source->source_id, vertex_source_id))
 				{
-					vertext_source = &input_source;
+					vertext_source = input_source;
 				}
 
-				if (!strcmp(input_source.source_id, normal_source_id))
+				if (!strcmp(input_source->source_id, normal_source_id))
 				{
-					normal_source = &input_source;
+					normal_source = input_source;
 				}
 
-				if (uv_source_id && !strcmp(input_source.source_id, uv_source_id))
+				if (uv_source_id)
 				{
-					uv_source = &input_source;
+					if(!strcmp(input_source->source_id, uv_source_id))
+					{
+						uv_source = input_source;
+					}
 				}
+
 			}
 
 			//fill mesh data
@@ -136,7 +141,6 @@ vector<Mesh *> load_model(const char * model_path)
 
 			vector<char *> index_tokens = split_string(triangles_tag->get_tag_by_name("p")->tag_content, ' ');
 
-			cout << " mesh index count " << index_tokens.size() << " vertex count " << vertex_count << endl;
 			for (int i = 0; i < vertex_count; i++)
 			{
 				unsigned int position_index = atoi(index_tokens[i * index_stride]);

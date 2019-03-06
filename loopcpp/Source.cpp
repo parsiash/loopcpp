@@ -8,6 +8,11 @@ using namespace std;
 
 void resize_callback(GLFWwindow * window, int width, int height);
 
+namespace
+{
+	Engine * engine;
+}
+
 int main()
 {
 	//initialize glfw
@@ -45,7 +50,7 @@ int main()
 
 		
 	//intialize the enginep
-	struct Engine * engine = create_engine(window, 800, 600);
+	engine = create_engine(window, 800, 600);
 
 	cout << "engine initialized" << endl;
 
@@ -71,4 +76,6 @@ int main()
 void resize_callback(GLFWwindow * window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	engine->screen_width = width;
+	engine->screen_height = height;
 }

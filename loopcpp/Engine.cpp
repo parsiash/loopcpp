@@ -59,14 +59,6 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 		auto mesh = temp_meshes[i];
 		main_engine->meshes[i] = mesh;
 		setup_mesh(mesh);
-
-		cout << " mesh vertex count " << mesh->vertex_count << endl;
-		for (int i = 0; i < mesh->vertex_count; i++)
-		{
-			auto vertex = mesh->vertices[i];
-			cout << "vertex : " << i << " " << vertex.position.x << " " << vertex.position.y << " " << vertex.position.z << endl;
-		}
-
 	}
 
 	

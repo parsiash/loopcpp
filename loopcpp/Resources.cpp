@@ -5,6 +5,8 @@
 #include<xml.h>
 #include<string_utility.h>
 #include<Mesh.h>
+#include<unordered_map>
+#include<new>
 
 using namespace std;
 
@@ -13,7 +15,12 @@ const char * all_model_paths[] =
 	"../resources/cube.dae",
 	"../resources/building.dae",
 	"../resources/sphere.dae",
+	"../resources/hello.dae",
 };
+
+unordered_map<string, int> mesh_id_map;
+vector<Mesh *> all_meshes;
+
 
 vector<Mesh *> load_model(const char * model_path)
 {
@@ -190,7 +197,6 @@ vector<Mesh *> load_model(const char * model_path)
 	}
 
 	free_xml_data(xml_data);
-
 	return meshes;
 }
 
@@ -204,5 +210,32 @@ vector<Mesh *> load_all_models()
 		meshes.insert(meshes.end(), model_meshes.begin(), model_meshes.end());
 	}
 
+	//store meshes and id map
+	all_meshes = meshes;
+	for (int i = 0; i < all_meshes.size(); i++)
+	{
+		all_meshes[i]->mesh_id = i;
+		mesh_id_map[all_meshes[i]->name] = i;
+	}
+
+
 	return meshes;
+}
+
+int get_mesh_id(const char * mesh_name)
+{
+	if (mesh_id_map.find(mesh_name) == mesh_id_map.end())
+	{
+		return -1;
+	}
+
+	return mesh_id_map[mesh_name];
+}
+
+Mesh * get_mesh(unsigned int mesh_id)
+{
+	if (mesh_id >= 0 && mesh_id < all_meshes.size())
+	{
+		return all_meshes[mesh_id];
+	}
 }

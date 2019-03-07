@@ -131,6 +131,7 @@ void render(struct Engine * engine)
 	glm::mat4 projection_transform = glm::perspective(glm::radians(engine->main_camera->fov), (engine->screen_width * 1.0f) / engine->screen_height, 0.1f, 100.0f);
 	engine->test_shader->set_mat4("view", view_transform);
 	engine->test_shader->set_mat4("projection", projection_transform);
+	
 
 
 	for (int i = 0; i < main_engine->mesh_count; i++)

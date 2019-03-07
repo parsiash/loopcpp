@@ -10,6 +10,7 @@ struct Vertex
 
 struct Mesh
 {
+	int mesh_id;
 	char name[20];
 
 	//vertex data
@@ -19,4 +20,10 @@ struct Mesh
 	//render data
 	unsigned int vao;
 	unsigned int vbo;
+};
+
+struct Rendered_Mesh
+{
+	int mesh_id;
+	unsigned int vao;
 };

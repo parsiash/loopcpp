@@ -1,17 +1,116 @@
 #include<graphics.h>
 #include<glad\glad.h>
+#include<Resources.h>
 
-void setup_mesh(Mesh * mesh)
+using namespace std;
+
+
+void Render_System::initialize()
 {
-	unsigned int vao, vbo;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+
+	//load shaders
+
+	//load all mesh resources
+	vector<Mesh_Data *> loaded_meshes = load_all_models();
+
+	//setup meshes
+	this->all_mesh_data = {};
+	this->meshes = {};
+
+	for (int i = 0; i < loaded_meshes.size(); i++)
+	{
+		//setup mesh data in vertex buffer
+		Mesh_Data * mesh_data = loaded_meshes[i];
+		setup_mesh_data(mesh_data);
+
+
+		mesh_data->mesh_id = i;
+
+
+		//create renderable mesh from mesh data
+		auto renderable_mesh = prepare_mesh(mesh_data);
+		this->meshes[i] = renderable_mesh;
+	}
+
+	//store meshes and id map
+	this->all_mesh_data = meshes;
+	for (int i = 0; i < all_mesh_data.size(); i++)
+	{
+		all_mesh_data[i]->mesh_id = i;
+		mesh_id_map[all_mesh_data[i]->name] = i;
+	}
+
+	//initialize light mesh
+	unsigned int light_vao;
+	glGenVertexArrays(1, &light_vao);
+	glBindVertexArray(light_vao);
+
+	auto sphere_mesh = get_mesh(get_mesh_id("Sphere"));
+	glBindBuffer(GL_ARRAY_BUFFER, sphere_mesh->vbo);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	this->light_mesh = (Mesh *)malloc(sizeof(Mesh));
+	this->light_mesh->vao = light_vao;
+	this->light_mesh->mesh_id = sphere_mesh->mesh_id;
+	this->light_mesh->vertex_count = sphere_mesh->vertex_count;
+
+}
+
+void Render_System::render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader * shader)
+{
+	if (this->meshes.find(mesh_id) == this->meshes.end())
+	{
+		return;
+	}
+
+	auto renderable_mesh = this->meshes[mesh_id];
+
+	shader->use();
+	shader->set_mat4("model", model);
+	shader->set_mat4("view", view);
+	shader->set_mat4("projection", projection);
+
+	glBindVertexArray(renderable_mesh->vao);
+	glDrawArrays(GL_TRIANGLES, 0, renderable_mesh->vertex_count);
+}
+
+void Render_System::render_light()
+
+void setup_mesh_data(Mesh_Data * mesh)
+{
+	unsigned int vbo;
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glBufferData(GL_ARRAY_BUFFER, mesh->vertex_count * sizeof(Vertex), mesh->vertices, GL_STATIC_DRAW);
 	
+	//unbind gl objects
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	mesh->vbo = vbo;
+}
+
+
+Mesh * prepare_mesh(Mesh_Data * mesh)
+{
+	if (!mesh || mesh->vbo == 0)
+	{
+		return nullptr;
+	}
+
+	unsigned int vao;
+	glGenVertexArrays(1, &vao);
+
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
+
 	//configure position data
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
@@ -24,10 +123,13 @@ void setup_mesh(Mesh * mesh)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
-	//unbind gl objects
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	mesh->vao = vao;
-	mesh->vbo = vbo;
+	Mesh * renderable_mesh = (Mesh *)malloc(sizeof(Mesh));
+	renderable_mesh->mesh_id = mesh->mesh_id;
+	renderable_mesh->vertex_count = mesh->vertex_count;
+	renderable_mesh->vao = vao;
+
+	return renderable_mesh;
 }

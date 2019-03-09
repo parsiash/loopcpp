@@ -23,7 +23,7 @@ struct Engine
 	struct Input_Module * input_module;
 
 	unsigned int mesh_count;
-	Mesh ** meshes;
+	Mesh_Data ** meshes;
 
 	void update();
 };

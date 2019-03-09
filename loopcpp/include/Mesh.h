@@ -8,7 +8,7 @@ struct Vertex
 	glm::vec2 uv;
 };
 
-struct Mesh
+struct Mesh_Data
 {
 	int mesh_id;
 	char name[20];
@@ -18,12 +18,12 @@ struct Mesh
 	Vertex * vertices;
 	
 	//render data
-	unsigned int vao;
 	unsigned int vbo;
 };
 
-struct Rendered_Mesh
+struct Mesh
 {
 	int mesh_id;
+	unsigned int vertex_count;
 	unsigned int vao;
 };

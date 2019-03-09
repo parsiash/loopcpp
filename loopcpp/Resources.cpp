@@ -10,7 +10,7 @@
 
 using namespace std;
 
-const char * all_model_paths[] = 
+const char * all_model_paths[] =
 {
 	"../resources/cube.dae",
 	"../resources/building.dae",
@@ -18,11 +18,7 @@ const char * all_model_paths[] =
 	"../resources/hello.dae",
 };
 
-unordered_map<string, int> mesh_id_map;
-vector<Mesh *> all_meshes;
-
-
-vector<Mesh *> load_model(const char * model_path)
+vector<Mesh_Data *> load_model(const char * model_path)
 {
 	cout << "loading model from file : " << model_path << endl;
 
@@ -45,7 +41,7 @@ vector<Mesh *> load_model(const char * model_path)
 		}
 	};
 
-	vector<Mesh *> meshes;
+	vector<Mesh_Data *> meshes;
 
 	//read geometries
 	for (auto geometry_tag : geometry_tags)
@@ -187,12 +183,12 @@ vector<Mesh *> load_model(const char * model_path)
 				}
 			}
 
-			Mesh * mesh = (Mesh *)malloc(sizeof(Mesh));
-			strcpy(mesh->name, geometry_name);
-			mesh->vertex_count = vertex_count;
-			mesh->vertices = vertices;
+			Mesh_Data * mesh_data = (Mesh_Data *)malloc(sizeof(Mesh_Data));
+			strcpy(mesh_data->name, geometry_name);
+			mesh_data->vertex_count = vertex_count;
+			mesh_data->vertices = vertices;
 
-			meshes.push_back(mesh);
+			meshes.push_back(mesh_data);
 		}
 	}
 
@@ -200,9 +196,9 @@ vector<Mesh *> load_model(const char * model_path)
 	return meshes;
 }
 
-vector<Mesh *> load_all_models()
+vector<Mesh_Data *> load_all_models()
 {
-	vector<Mesh *> meshes;
+	vector<Mesh_Data *> meshes;
 
 	for (auto model_path : all_model_paths)
 	{
@@ -210,32 +206,6 @@ vector<Mesh *> load_all_models()
 		meshes.insert(meshes.end(), model_meshes.begin(), model_meshes.end());
 	}
 
-	//store meshes and id map
-	all_meshes = meshes;
-	for (int i = 0; i < all_meshes.size(); i++)
-	{
-		all_meshes[i]->mesh_id = i;
-		mesh_id_map[all_meshes[i]->name] = i;
-	}
-
 
 	return meshes;
-}
-
-int get_mesh_id(const char * mesh_name)
-{
-	if (mesh_id_map.find(mesh_name) == mesh_id_map.end())
-	{
-		return -1;
-	}
-
-	return mesh_id_map[mesh_name];
-}
-
-Mesh * get_mesh(unsigned int mesh_id)
-{
-	if (mesh_id >= 0 && mesh_id < all_meshes.size())
-	{
-		return all_meshes[mesh_id];
-	}
 }

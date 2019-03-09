@@ -11,6 +11,8 @@
 #include<graphics.h>
 #include<Resources.h>
 #include<vector>
+#include<Windows.h>
+
 
 enum shader_type {vertex, fragment};
 
@@ -48,15 +50,15 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 	main_engine->texture_1 = generate_texture("../resources/mahdis.jpg");
 
 	//load models
-	vector<Mesh *> temp_meshes;
+	vector<Mesh_Data *> temp_meshes;
 	temp_meshes = load_all_models();
 	main_engine->mesh_count = temp_meshes.size();
-	main_engine->meshes = (Mesh **)malloc(main_engine->mesh_count * sizeof(Mesh *));
+	main_engine->meshes = (Mesh_Data **)malloc(main_engine->mesh_count * sizeof(Mesh_Data *));
 	for(int  i = 0; i < temp_meshes.size(); i++)
 	{
 		auto mesh = temp_meshes[i];
 		main_engine->meshes[i] = mesh;
-		setup_mesh(mesh);
+		setup_mesh_data(mesh);
 	}
 
 	
@@ -136,7 +138,7 @@ void render(struct Engine * engine)
 
 	for (int i = 0; i < main_engine->mesh_count; i++)
 	{
-		Mesh * mesh = main_engine->meshes[i];
+		Mesh_Data * mesh = main_engine->meshes[i];
 
 		if (!strcmp(mesh->name, "Cube"))
 		{
@@ -155,13 +157,13 @@ void render(struct Engine * engine)
 
 }
 
-
 void Engine::update()
 {
 	//update time
 	float current_time = glfwGetTime();
 	float dt = current_time - this->last_frame_time;
 	this->last_frame_time = current_time;
+	
 
 	process_input(this, dt);
 	render(this);

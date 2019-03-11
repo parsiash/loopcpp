@@ -119,7 +119,13 @@ void render(struct Engine * engine)
 	//setup view and projection transforms
 	glm::mat4 view_transform = engine->main_camera->get_view_transform();
 	glm::mat4 projection_transform = glm::perspective(glm::radians(engine->main_camera->fov), (engine->screen_width * 1.0f) / engine->screen_height, 0.1f, 100.0f);
-	
+
+	//setup lights
+	Light lights[1];
+	lights[0].color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	lights[0].position = cube_positions[5];
+	main_engine->render_system->setup_lights(1, lights, view_transform, projection_transform);
+
 	auto cube_mesh = main_engine->render_system->get_mesh("Cube");
 	glm::mat4 cube_transform = glm::mat4(1.0f);
 	cube_transform = glm::translate(cube_transform, cube_positions[3]);

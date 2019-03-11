@@ -116,6 +116,19 @@ void Shader::set_vec3(const char * name, vec3 value)
 	glUniform3fv(uniform_location, 1, &value[0]);
 }
 
+void Shader::set_vec4(const char * name, vec4 value)
+{
+	int uniform_location = glGetUniformLocation(this->program_id, name);
+	if (uniform_location < 0)
+	{
+		std::cout << "no uniform with name " << name << " found" << std::endl;
+		return;
+	}
+
+	glUniform4fv(uniform_location, 1, &value[0]);
+}
+
+
 void Shader::set_mat4(const char * name, mat4 value)
 {
 	int uniform_location = glGetUniformLocation(this->program_id, name);

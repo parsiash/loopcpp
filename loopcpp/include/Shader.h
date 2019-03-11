@@ -13,6 +13,7 @@ struct Shader
 	void set_int(const char * name, int value);
 	void set_float(const char * name, float value);
 	void set_vec3(const char * name, vec3 value);
+	void set_vec4(const char * name, vec4 value);
 	void set_mat4(const char * name, mat4 value);
 };
 

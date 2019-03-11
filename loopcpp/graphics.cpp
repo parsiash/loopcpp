@@ -2,6 +2,7 @@
 #include<glad\glad.h>
 #include<Resources.h>
 #include<iostream>
+#include<glm/gtc/matrix_transform.hpp>
 
 using namespace std;
 
@@ -50,6 +51,7 @@ void Render_System::initialize()
 	this->light_mesh->mesh_id = sphere_mesh->mesh_id;
 	this->light_mesh->vertex_count = sphere_mesh->vertex_count;
 
+	this->light_count = 0;
 }
 
 void Render_System::render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
@@ -88,6 +90,21 @@ Mesh * Render_System::get_mesh(const char * mesh_name)
 	Mesh * mesh = this->meshes[mesh_name];
 	return mesh;
 }
+
+Shader * Render_System::get_shader(const char * shader_name)
+{
+	for (auto shader : this->shaders)
+	{
+		if (!strcmp(shader->name, shader_name))
+		{
+			return shader;
+		}
+	}
+
+	return nullptr;
+}
+
+
 
 void setup_mesh_data(Mesh_Data * mesh)
 {
@@ -140,4 +157,32 @@ Mesh * prepare_mesh(Mesh_Data * mesh)
 	renderable_mesh->vao = vao;
 
 	return renderable_mesh;
+}
+
+void Render_System::setup_lights(int light_count, Light * lights, mat4 view, mat4 projection)
+{
+	//setting lightss
+	light_count = min(light_count, MAX_LIGHT_COUNT);
+	this->light_count = light_count;
+	for (int i = 0; i < light_count; i++)
+	{
+		this->lights[i] = lights[i];
+	}
+
+	//render lights
+	glBindVertexArray(this->light_mesh->vao);
+	this->light_shader = get_shader("light");
+	this->light_shader->use();
+	this->light_shader->set_mat4("view", view);
+	this->light_shader->set_mat4("projection", projection);
+	for (int i = 0; i < this->light_count; i++)
+	{
+		mat4 model = mat4(1.0f);
+		glm::translate(model, this->lights[i].position);
+		this->light_shader->set_vec4("light_color", this->lights[i].color);
+		this->light_shader->set_mat4("model", model);
+
+		glDrawArrays(GL_TRIANGLES, 0, this->light_mesh->vertex_count);
+	}
+	glBindVertexArray(0);
 }

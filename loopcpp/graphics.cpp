@@ -62,6 +62,10 @@ void Render_System::render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, gl
 	shader->set_mat4("model", model);
 	shader->set_mat4("view", view);
 	shader->set_mat4("projection", projection);
+	if (this->light_count > 0)
+	{
+		shader->set_vec4("light_color", this->lights[0].color);
+	}
 
 	glBindVertexArray(mesh->vao);
 	glDrawArrays(GL_TRIANGLES, 0, mesh->vertex_count);

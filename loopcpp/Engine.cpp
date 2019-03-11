@@ -122,7 +122,7 @@ void render(struct Engine * engine)
 
 	//setup lights
 	Light lights[1];
-	lights[0].color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	lights[0].color = vec4(.3f, 0.7f, 0.1f, 0.8f);
 	lights[0].position = cube_positions[5];
 	main_engine->render_system->setup_lights(1, lights, view_transform, projection_transform);
 

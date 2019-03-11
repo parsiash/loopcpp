@@ -5,6 +5,7 @@ using namespace glm;
 
 struct Shader
 {
+	char * name;
 	unsigned int program_id;
 	void use();
 
@@ -15,4 +16,4 @@ struct Shader
 	void set_mat4(const char * name, mat4 value);
 };
 
-Shader * create_shader(const char * vertex_shader_path, const char * fragment_shader_path);
+Shader * create_shader(const char * shader_name, const char * vertex_shader_path, const char * fragment_shader_path);

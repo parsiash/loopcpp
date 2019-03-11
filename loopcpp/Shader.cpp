@@ -4,9 +4,13 @@
 #include<file_utility.h>
 #include<glad/glad.h>
 
-Shader * create_shader(const char * vertex_shader_path, const char * fragment_shader_path)
+Shader * create_shader(const char * shader_name, const char * vertex_shader_path, const char * fragment_shader_path)
 {
 	Shader * shader = (struct Shader *)malloc(sizeof(struct Shader));
+
+	int shader_name_len = strlen(shader_name);
+	shader->name = (char *)malloc((shader_name_len) * sizeof(char));
+	strcpy(shader->name, shader_name);
 
 	const char * vertex_source = get_file_content(vertex_shader_path);
 	const char * fragment_source = get_file_content(fragment_shader_path);

@@ -11,19 +11,13 @@ struct Engine
 	GLFWwindow * window;
 	int screen_width;
 	int screen_height;
-	Shader * test_shader;
-	unsigned int vbo;
-	unsigned int ebo;
-	unsigned int test_vao;
+	Render_System * render_system;
 	unsigned int texture_0;
 	unsigned int texture_1;
 	Camera * main_camera;
 	float camera_move_speed;
 	float last_frame_time;
 	struct Input_Module * input_module;
-
-	unsigned int mesh_count;
-	Mesh_Data ** meshes;
 
 	void update();
 };

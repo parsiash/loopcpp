@@ -12,6 +12,7 @@
 #include<Resources.h>
 #include<vector>
 #include<Windows.h>
+#include<new>
 
 
 enum shader_type {vertex, fragment};
@@ -29,11 +30,11 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 	main_engine->screen_width = width;
 	main_engine->screen_height = height;
 
-	main_engine->test_shader = create_shader("../shaders/vertex_shader.glsl", "../shaders/fragment_shader.glsl");
-	cout << "shaders loaded" << endl;
-
 	//initialize sub-systems
 	main_engine->input_module = create_input_module(main_engine->window);
+
+	main_engine->render_system = new (malloc(sizeof(Render_System))) Render_System;
+	main_engine->render_system->initialize();
 
 	//create camera
 	main_engine->main_camera = create_camera(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, -1.0f));
@@ -49,19 +50,6 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 	main_engine->texture_0 = generate_texture("../resources/Stone.jpg");
 	main_engine->texture_1 = generate_texture("../resources/mahdis.jpg");
 
-	//load models
-	vector<Mesh_Data *> temp_meshes;
-	temp_meshes = load_all_models();
-	main_engine->mesh_count = temp_meshes.size();
-	main_engine->meshes = (Mesh_Data **)malloc(main_engine->mesh_count * sizeof(Mesh_Data *));
-	for(int  i = 0; i < temp_meshes.size(); i++)
-	{
-		auto mesh = temp_meshes[i];
-		main_engine->meshes[i] = mesh;
-		setup_mesh_data(mesh);
-	}
-
-	
 	cout << "texture loaded" << endl;
 
 	return main_engine;
@@ -123,35 +111,19 @@ void render(struct Engine * engine)
 	glBindTexture(GL_TEXTURE_2D, engine->texture_0);
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, engine->texture_1);
-	engine->test_shader->use();
-	glUniform1i(glGetUniformLocation(engine->test_shader->program_id, "texture_0"), 0);
-	glUniform1i(glGetUniformLocation(engine->test_shader->program_id, "texture_1"), 1);
+
+	//glUniform1i(glGetUniformLocation(engine->test_shader->program_id, "texture_0"), 0);
+	//glUniform1i(glGetUniformLocation(engine->test_shader->program_id, "texture_1"), 1);
 
 
 	//setup view and projection transforms
 	glm::mat4 view_transform = engine->main_camera->get_view_transform();
 	glm::mat4 projection_transform = glm::perspective(glm::radians(engine->main_camera->fov), (engine->screen_width * 1.0f) / engine->screen_height, 0.1f, 100.0f);
-	engine->test_shader->set_mat4("view", view_transform);
-	engine->test_shader->set_mat4("projection", projection_transform);
 	
-
-
-	for (int i = 0; i < main_engine->mesh_count; i++)
-	{
-		Mesh_Data * mesh = main_engine->meshes[i];
-
-		if (!strcmp(mesh->name, "Cube"))
-		{
-			glBindVertexArray(mesh->vao);
-
-			glm::mat4 model_transform = glm::mat4(1.0f);
-			model_transform = glm::translate(model_transform, cube_positions[i * 2]);
-			glUniformMatrix4fv(glGetUniformLocation(engine->test_shader->program_id, "model"), 1, GL_FALSE, glm::value_ptr(model_transform));
-
-			glDrawArrays(GL_TRIANGLES, 0, mesh->vertex_count);
-		}
-	}
-
+	auto cube_mesh = main_engine->render_system->get_mesh("Cube");
+	glm::mat4 cube_transform = glm::mat4(1.0f);
+	cube_transform = glm::translate(cube_transform, cube_positions[3]);
+	main_engine->render_system->render_mesh(cube_mesh, cube_transform, view_transform, projection_transform);
 	//render test light sphere
 
 

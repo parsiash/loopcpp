@@ -10,14 +10,15 @@
 struct Render_System
 {
 	Mesh * light_mesh;
-	std::unordered_map<int, Mesh *> meshes;
-
-	std::unordered_map<std::string, int> mesh_id_map;
+	std::unordered_map<std::string, Mesh *> meshes;
 	std::vector<Mesh_Data *> all_mesh_data;
 
+	std::vector<Shader *> shaders;
 
 	void initialize();
-	void render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader * shader);
+	void render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+	Mesh * get_mesh(const char * mesh_name);
+	Mesh_Data * get_mesh_data(const char * mesh_name);
 };
 
 void setup_mesh_data(Mesh_Data * mesh);

@@ -64,10 +64,7 @@ int main()
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-	
-	glDeleteBuffers(1, &engine->vbo);
-	glDeleteBuffers(1, &engine->ebo);
-	glDeleteVertexArrays(1, &engine->test_vao);
+
 	glfwTerminate();
 	cout << "terminated" << endl;
 	return 0;

@@ -1,22 +1,21 @@
 #include<graphics.h>
 #include<glad\glad.h>
 #include<Resources.h>
+#include<iostream>
 
 using namespace std;
 
 
 void Render_System::initialize()
 {
-
 	//load shaders
+	this->shaders = load_all_shaders();
+	cout << "shaders count = " << this->shaders.size() << endl;
 
 	//load all mesh resources
 	vector<Mesh_Data *> loaded_meshes = load_all_models();
 
 	//setup meshes
-	this->all_mesh_data = {};
-	this->meshes = {};
-
 	for (int i = 0; i < loaded_meshes.size(); i++)
 	{
 		//setup mesh data in vertex buffer
@@ -25,19 +24,11 @@ void Render_System::initialize()
 
 
 		mesh_data->mesh_id = i;
-
+		this->all_mesh_data.push_back(mesh_data);
 
 		//create renderable mesh from mesh data
 		auto renderable_mesh = prepare_mesh(mesh_data);
-		this->meshes[i] = renderable_mesh;
-	}
-
-	//store meshes and id map
-	this->all_mesh_data = meshes;
-	for (int i = 0; i < all_mesh_data.size(); i++)
-	{
-		all_mesh_data[i]->mesh_id = i;
-		mesh_id_map[all_mesh_data[i]->name] = i;
+		this->meshes[mesh_data->name] = renderable_mesh;
 	}
 
 	//initialize light mesh
@@ -45,7 +36,7 @@ void Render_System::initialize()
 	glGenVertexArrays(1, &light_vao);
 	glBindVertexArray(light_vao);
 
-	auto sphere_mesh = get_mesh(get_mesh_id("Sphere"));
+	auto sphere_mesh = get_mesh_data("Sphere");
 	glBindBuffer(GL_ARRAY_BUFFER, sphere_mesh->vbo);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
@@ -61,25 +52,42 @@ void Render_System::initialize()
 
 }
 
-void Render_System::render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection, Shader * shader)
+void Render_System::render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 {
-	if (this->meshes.find(mesh_id) == this->meshes.end())
-	{
-		return;
-	}
-
-	auto renderable_mesh = this->meshes[mesh_id];
+	Shader * shader = this->shaders[0];
 
 	shader->use();
 	shader->set_mat4("model", model);
 	shader->set_mat4("view", view);
 	shader->set_mat4("projection", projection);
 
-	glBindVertexArray(renderable_mesh->vao);
-	glDrawArrays(GL_TRIANGLES, 0, renderable_mesh->vertex_count);
+	glBindVertexArray(mesh->vao);
+	glDrawArrays(GL_TRIANGLES, 0, mesh->vertex_count);
 }
 
-void Render_System::render_light()
+Mesh_Data * Render_System::get_mesh_data(const char * mesh_name)
+{
+	for (auto mesh_data : this->all_mesh_data)
+	{
+		if (!strcmp(mesh_data->name, mesh_name))
+		{
+			return mesh_data;
+		}
+	}
+
+	return nullptr;
+}
+
+Mesh * Render_System::get_mesh(const char * mesh_name)
+{
+	if (this->meshes.find(mesh_name) == this->meshes.end())
+	{
+		return nullptr;
+	}
+
+	Mesh * mesh = this->meshes[mesh_name];
+	return mesh;
+}
 
 void setup_mesh_data(Mesh_Data * mesh)
 {

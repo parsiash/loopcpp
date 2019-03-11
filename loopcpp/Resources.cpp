@@ -6,17 +6,26 @@
 #include<string_utility.h>
 #include<Mesh.h>
 #include<unordered_map>
-#include<new>
+#include<sstream>
+#include<graphics.h>
 
 using namespace std;
 
-const char * all_model_paths[] =
+const char * all_model_names[] =
 {
-	"../resources/cube.dae",
-	"../resources/building.dae",
-	"../resources/sphere.dae",
-	"../resources/hello.dae",
+	"cube",
+	"building",
+	"sphere",
+	"hello"
 };
+
+
+const char * all_shader_names[] = 
+{
+	"basic",
+	"light"
+};
+
 
 vector<Mesh_Data *> load_model(const char * model_path)
 {
@@ -200,12 +209,37 @@ vector<Mesh_Data *> load_all_models()
 {
 	vector<Mesh_Data *> meshes;
 
-	for (auto model_path : all_model_paths)
+	for (auto model_name : all_model_names)
 	{
-		auto model_meshes = load_model(model_path);
+		stringstream model_path_sstream;
+		model_path_sstream << "../resources/" << model_name << ".dae";
+		auto model_meshes = load_model(model_path_sstream.str().c_str());
 		meshes.insert(meshes.end(), model_meshes.begin(), model_meshes.end());
 	}
 
-
 	return meshes;
+}
+
+Shader * load_shader(const char * shader_name)
+{
+	stringstream vertex_shader_sstream, fragment_shader_sstream;
+
+	vertex_shader_sstream << "../shaders/" << shader_name << ".vs";
+	fragment_shader_sstream << "../shaders/" << shader_name << ".fs";
+
+	Shader * shader = create_shader(shader_name, vertex_shader_sstream.str().c_str(), fragment_shader_sstream.str().c_str());
+
+	return shader;
+}
+
+vector<Shader *> load_all_shaders()
+{
+	vector<Shader *> shaders;
+	for (auto shader_name : all_shader_names)
+	{
+		Shader * shader = load_shader(shader_name);
+		shaders.push_back(shader);
+	}
+
+	return shaders;
 }

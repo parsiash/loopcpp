@@ -3,6 +3,6 @@
 
 struct Light
 {
-	glm::vec4 color;
+	glm::vec3 color;
 	glm::vec3 position;
 };

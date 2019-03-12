@@ -152,3 +152,11 @@ void Shader::set_mat3(const char * name, mat3 value)
 
 	glUniformMatrix3fv(uniform_location, 1, GL_FALSE, &value[0][0]);
 }
+
+void Shader::set_material(Material material)
+{
+	this->set_vec3("material.ambient", material.ambient);
+	this->set_vec3("material.diffuse", material.diffuse);
+	this->set_vec3("material.specular", material.specular);
+	this->set_float("material.shininess", material.shininess);
+}

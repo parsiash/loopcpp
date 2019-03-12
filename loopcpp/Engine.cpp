@@ -20,7 +20,11 @@ enum shader_type {vertex, fragment};
 using namespace std;
 
 Engine * main_engine;
+
+//test paramteres for rendering
 float cube_angle = 0.0f;
+Material cube_material;
+
 
 struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 {
@@ -50,6 +54,13 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	main_engine->texture_0 = generate_texture("../resources/Stone.jpg");
 	main_engine->texture_1 = generate_texture("../resources/mahdis.jpg");
+
+
+	//initialize cube material
+	cube_material.ambient = vec3(0.19225f, 0.19225f, 0.19225f);
+	cube_material.diffuse = vec3(0.50754f, 0.50754f, 0.50754f);
+	cube_material.specular = vec3(0.508273f, 0.508273f, 0.508273f);
+	cube_material.shininess = 128.0f * 0.4f;
 
 	cout << "texture loaded" << endl;
 
@@ -90,7 +101,11 @@ void process_input(struct Engine * engine, float dt)
 	//handle test building rotation
 	if (engine->input_module->get_key(INPUT_KEY_E))
 	{
-		cube_angle += 3.0f * dt;
+		cube_angle += 2.0f * dt;
+	}
+	if (engine->input_module->get_key(INPUT_KEY_Q))
+	{
+		cube_angle -= 2.0f * dt;
 	}
 }
 
@@ -130,7 +145,8 @@ void render(struct Engine * engine)
 
 	//setup lights
 	Light lights[1];
-	lights[0].color = vec4(0.2f, 0.8f, 0.3f, 1.0f);
+	lights[0].color = vec3(0.2f, 0.8f, 0.3f);
+	lights[0].color = vec3(1.0f);
 	lights[0].position = cube_positions[5];
 	main_engine->render_system->setup_lights(1, lights, view_transform, projection_transform);
 
@@ -138,7 +154,7 @@ void render(struct Engine * engine)
 	glm::mat4 cube_transform = glm::mat4(1.0f);
 	cube_transform = glm::translate(cube_transform, cube_positions[3]);
 	cube_transform = glm::rotate(cube_transform, cube_angle, vec3(1.0f, 0.0f, 0.0f));
-	main_engine->render_system->render_mesh(cube_mesh, vec4(0.8f, 0.1f, 0.05f, 1.0), engine->main_camera->position, cube_transform, view_transform, projection_transform);
+	main_engine->render_system->render_mesh(cube_mesh, cube_material, engine->main_camera->position, cube_transform, view_transform, projection_transform);
 	//render test light sphere
 
 

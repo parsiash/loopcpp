@@ -54,21 +54,30 @@ void Render_System::initialize()
 	this->light_count = 0;
 }
 
-void Render_System::render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+void Render_System::render_mesh(Mesh * mesh, vec4 color, glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 {
 	Shader * shader = this->shaders[0];
 
+	//setup shader, color and transforms
 	shader->use();
 	shader->set_mat4("model", model);
 	shader->set_mat4("view", view);
 	shader->set_mat4("projection", projection);
+	mat3 normal_matrix = glm::transpose(glm::inverse(model));
+	shader->set_mat3("normal_matrix", normal_matrix);
+
+	shader->set_vec4("main_color", color);
 	if (this->light_count > 0)
 	{
 		shader->set_vec4("light_color", this->lights[0].color);
+		shader->set_vec3("light_pos", this->lights[0].position);
 	}
-
+	
+	//bind vertex array and draw the mesh
 	glBindVertexArray(mesh->vao);
 	glDrawArrays(GL_TRIANGLES, 0, mesh->vertex_count);
+
+	glBindVertexArray(0);
 }
 
 Mesh_Data * Render_System::get_mesh_data(const char * mesh_name)

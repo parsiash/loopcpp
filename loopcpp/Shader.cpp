@@ -140,3 +140,15 @@ void Shader::set_mat4(const char * name, mat4 value)
 
 	glUniformMatrix4fv(uniform_location, 1, GL_FALSE, &value[0][0]);
 }
+
+void Shader::set_mat3(const char * name, mat3 value)
+{
+	int uniform_location = glGetUniformLocation(this->program_id, name);
+	if (uniform_location < 0)
+	{
+		std::cout << "no uniform with name " << name << " found" << std::endl;
+		return;
+	}
+
+	glUniformMatrix3fv(uniform_location, 1, GL_FALSE, &value[0][0]);
+}

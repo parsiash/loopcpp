@@ -15,6 +15,7 @@ struct Shader
 	void set_vec3(const char * name, vec3 value);
 	void set_vec4(const char * name, vec4 value);
 	void set_mat4(const char * name, mat4 value);
+	void set_mat3(const char * name, mat3 value);
 };
 
 Shader * create_shader(const char * shader_name, const char * vertex_shader_path, const char * fragment_shader_path);

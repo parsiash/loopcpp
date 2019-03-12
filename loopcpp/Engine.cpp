@@ -20,6 +20,7 @@ enum shader_type {vertex, fragment};
 using namespace std;
 
 Engine * main_engine;
+float cube_angle = 0.0f;
 
 struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 {
@@ -84,6 +85,13 @@ void process_input(struct Engine * engine, float dt)
 	{
 		engine->main_camera->move(-engine->main_camera->get_right() * engine->camera_move_speed * dt);
 	}
+
+
+	//handle test building rotation
+	if (engine->input_module->get_key(INPUT_KEY_E))
+	{
+		cube_angle += 3.0f * dt;
+	}
 }
 
 void render(struct Engine * engine)
@@ -101,7 +109,7 @@ void render(struct Engine * engine)
 	  glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
-	glClearColor(1, 0.5, 0.5, 1.0);
+	glClearColor(0.05f, 0.1f, 0.12f, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -122,14 +130,15 @@ void render(struct Engine * engine)
 
 	//setup lights
 	Light lights[1];
-	lights[0].color = vec4(.3f, 0.7f, 0.1f, 0.8f);
+	lights[0].color = vec4(1.0f);
 	lights[0].position = cube_positions[5];
 	main_engine->render_system->setup_lights(1, lights, view_transform, projection_transform);
 
 	auto cube_mesh = main_engine->render_system->get_mesh("Cube");
 	glm::mat4 cube_transform = glm::mat4(1.0f);
 	cube_transform = glm::translate(cube_transform, cube_positions[3]);
-	main_engine->render_system->render_mesh(cube_mesh, cube_transform, view_transform, projection_transform);
+	cube_transform = glm::rotate(cube_transform, cube_angle, vec3(1.0f, 0.0f, 0.0f));
+	main_engine->render_system->render_mesh(cube_mesh, vec4(0.8f, 0.5f, 0.2f, 1.0), cube_transform, view_transform, projection_transform);
 	//render test light sphere
 
 

@@ -49,6 +49,12 @@ bool Input_Module::get_key(INPUT_KEY key)
 		case INPUT_KEY_LEFT:
 			return glfwGetKey(window, GLFW_KEY_LEFT) || glfwGetKey(window, GLFW_KEY_A);
 			break;
+		case INPUT_KEY_E:
+			return glfwGetKey(window, GLFW_KEY_E);
+			break;
+		case INPUT_KEY_Q:
+			return glfwGetKey(window, GLFW_KEY_Q);
+			break;
 		default:
 			return false;
 	}

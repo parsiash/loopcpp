@@ -28,7 +28,7 @@ struct Render_System
 	Shader * get_shader(const char * shader_name);
 
 	void setup_lights(int light_count, Light * lights, glm::mat4 view, glm::mat4 projection);
-	void render_mesh(Mesh * mesh, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+	void render_mesh(Mesh * mesh, glm::vec4 color, glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 };
 
 void setup_mesh_data(Mesh_Data * mesh);

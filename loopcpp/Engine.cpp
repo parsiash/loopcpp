@@ -130,7 +130,7 @@ void render(struct Engine * engine)
 
 	//setup lights
 	Light lights[1];
-	lights[0].color = vec4(1.0f);
+	lights[0].color = vec4(0.2f, 0.8f, 0.3f, 1.0f);
 	lights[0].position = cube_positions[5];
 	main_engine->render_system->setup_lights(1, lights, view_transform, projection_transform);
 
@@ -138,7 +138,7 @@ void render(struct Engine * engine)
 	glm::mat4 cube_transform = glm::mat4(1.0f);
 	cube_transform = glm::translate(cube_transform, cube_positions[3]);
 	cube_transform = glm::rotate(cube_transform, cube_angle, vec3(1.0f, 0.0f, 0.0f));
-	main_engine->render_system->render_mesh(cube_mesh, vec4(0.8f, 0.5f, 0.2f, 1.0), cube_transform, view_transform, projection_transform);
+	main_engine->render_system->render_mesh(cube_mesh, vec4(0.8f, 0.1f, 0.05f, 1.0), engine->main_camera->position, cube_transform, view_transform, projection_transform);
 	//render test light sphere
 
 

@@ -70,8 +70,10 @@ void Render_System::render_mesh(Mesh * mesh, Material material, vec3 camera_posi
 	shader->set_mat3("normal_matrix", normal_matrix);
 	if (this->light_count > 0)
 	{
-		shader->set_vec3("light_color", this->lights[0].color);
-		shader->set_vec3("light_pos", this->lights[0].position);
+		shader->set_vec3("light.position", this->lights[0].position);
+		shader->set_vec3("light.ambient", this->lights[0].ambient);
+		shader->set_vec3("light.diffuse", this->lights[0].diffuse);
+		shader->set_vec3("light.specular", this->lights[0].specular);
 	}
 	shader->set_vec3("eye_pos", camera_position);
 	
@@ -194,7 +196,7 @@ void Render_System::setup_lights(int light_count, Light * lights, mat4 view, mat
 	{
 		mat4 model = mat4(1.0f);
 		glm::translate(model, this->lights[i].position);
-		this->light_shader->set_vec3("light_color", this->lights[i].color);
+		this->light_shader->set_vec3("light_color", this->lights[i].diffuse);
 		this->light_shader->set_mat4("model", model);
 
 		glDrawArrays(GL_TRIANGLES, 0, this->light_mesh->vertex_count);

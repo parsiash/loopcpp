@@ -59,7 +59,7 @@ struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 	//initialize cube material
 	cube_material.ambient = vec3(0.19225f, 0.19225f, 0.19225f);
 	cube_material.diffuse = vec3(0.50754f, 0.50754f, 0.50754f);
-	cube_material.specular = vec3(0.508273f, 0.508273f, 0.508273f);
+	cube_material.specular = vec3(0.2f, 0.2f, 0.2f);
 	cube_material.shininess = 128.0f * 0.4f;
 
 	cout << "texture loaded" << endl;
@@ -145,9 +145,10 @@ void render(struct Engine * engine)
 
 	//setup lights
 	Light lights[1];
-	lights[0].color = vec3(0.2f, 0.8f, 0.3f);
-	lights[0].color = vec3(1.0f);
 	lights[0].position = cube_positions[5];
+	lights[0].ambient = vec3(0.1f);
+	lights[0].diffuse = vec3(0.7f, 0.2f, 0.1f);
+	lights[0].specular = vec3(1.0f);
 	main_engine->render_system->setup_lights(1, lights, view_transform, projection_transform);
 
 	auto cube_mesh = main_engine->render_system->get_mesh("Cube");

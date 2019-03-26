@@ -16,7 +16,8 @@ const char * all_model_names[] =
 	"cube",
 	"building",
 	"sphere",
-	"hello"
+	"hello",
+	"Head",
 };
 
 

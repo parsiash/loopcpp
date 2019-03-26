@@ -22,9 +22,10 @@ using namespace std;
 Engine * main_engine;
 
 //test paramteres for rendering
-float cube_angle = 0.0f;
+float cube_angle_x = 0.0f;
+float cube_angle_y = 0.0f;
 Material cube_material;
-
+Light light;
 
 struct Engine * create_engine(GLFWwindow * asghar, int width, int height)
 {
@@ -101,11 +102,11 @@ void process_input(struct Engine * engine, float dt)
 	//handle test building rotation
 	if (engine->input_module->get_key(INPUT_KEY_E))
 	{
-		cube_angle += 2.0f * dt;
+		cube_angle_x += 2.0f * dt;
 	}
 	if (engine->input_module->get_key(INPUT_KEY_Q))
 	{
-		cube_angle -= 2.0f * dt;
+		cube_angle_y += 2.0f * dt;
 	}
 }
 
@@ -143,18 +144,22 @@ void render(struct Engine * engine)
 	glm::mat4 view_transform = engine->main_camera->get_view_transform();
 	glm::mat4 projection_transform = glm::perspective(glm::radians(engine->main_camera->fov), (engine->screen_width * 1.0f) / engine->screen_height, 0.1f, 100.0f);
 
+
+	light.position = cube_positions[5];
+	light.ambient = vec3(0.1f);
+	light.diffuse = vec3(1.0f, 1.0f, 1.0f);
+	light.specular = vec3(1.0f);
+
 	//setup lights
 	Light lights[1];
-	lights[0].position = cube_positions[5];
-	lights[0].ambient = vec3(0.1f);
-	lights[0].diffuse = vec3(0.7f, 0.2f, 0.1f);
-	lights[0].specular = vec3(1.0f);
+	lights[0] = light;
 	main_engine->render_system->setup_lights(1, lights, view_transform, projection_transform);
 
-	auto cube_mesh = main_engine->render_system->get_mesh("Cube");
+	auto cube_mesh = main_engine->render_system->get_mesh("Head");
 	glm::mat4 cube_transform = glm::mat4(1.0f);
 	cube_transform = glm::translate(cube_transform, cube_positions[3]);
-	cube_transform = glm::rotate(cube_transform, cube_angle, vec3(1.0f, 0.0f, 0.0f));
+	cube_transform = glm::rotate(cube_transform, cube_angle_x, vec3(1.0f, 0.0f, 0.0f));
+	cube_transform = glm::rotate(cube_transform, cube_angle_y, vec3(0.0f, 1.0f, 0.0f));
 	main_engine->render_system->render_mesh(cube_mesh, cube_material, engine->main_camera->position, cube_transform, view_transform, projection_transform);
 	//render test light sphere
 
